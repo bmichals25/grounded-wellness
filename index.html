@@ -5,8 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GROUNDED — Plants with Purpose</title>
     <meta name="description" content="Functional botanicals for sleep, focus, calm, and recovery. Cannabis as wellness, not vice.">
+
+    <!-- Preload critical above-fold assets -->
+    <link rel="preload" href="hero-poster.jpg" as="image">
+    <link rel="preload" href="logo-white.png" as="image">
+    <link rel="preload" href="logo.png" as="image">
+
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" as="style">
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Caveat&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -24,23 +32,23 @@
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        html {
-            scroll-behavior: smooth;
-            overflow-x: hidden;
-        }
+        html { scroll-behavior: smooth; overflow-x: hidden; }
 
         body {
             font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
-            color: var(--loam);
-            background: var(--loam);
-            -webkit-font-smoothing: antialiased;
-            overflow-x: hidden;
+            color: var(--loam); background: var(--loam);
+            -webkit-font-smoothing: antialiased; overflow-x: hidden;
         }
 
         h1, h2, h3 { font-family: 'DM Serif Display', Georgia, serif; font-weight: 400; }
         .accent { font-family: 'Caveat', cursive; }
-
         ::selection { background: var(--sage); color: var(--loam); }
+
+        /* All images — prevent decode flash */
+        img {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
 
         /* ═══════════════════════════════════════════
            NAVIGATION
@@ -54,10 +62,10 @@
 
         nav.solid {
             background: rgba(44, 42, 37, 0.95);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
+            backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
             padding: 0.8rem 4rem;
             border-bottom: 1px solid rgba(183, 196, 161, 0.1);
+            will-change: backdrop-filter;
         }
 
         .nav-logo { height: 40px; opacity: 0.9; transition: height 0.5s ease; }
@@ -70,7 +78,6 @@
             transition: color 0.3s ease;
         }
         .nav-links a:hover { color: var(--sage); }
-
         .nav-cta {
             background: var(--sage) !important; color: var(--loam) !important;
             padding: 0.65rem 1.8rem !important; border-radius: 0; font-weight: 700 !important;
@@ -79,7 +86,7 @@
         .nav-cta:hover { background: #fff !important; }
 
         /* ═══════════════════════════════════════════
-           HERO — VIDEO BACKGROUND
+           HERO — KEN BURNS IMAGE (no video)
            ═══════════════════════════════════════════ */
         .hero {
             position: relative; height: 100vh; min-height: 700px;
@@ -87,17 +94,23 @@
             overflow: hidden;
         }
 
-        .hero-video {
-            position: absolute; inset: 0; width: 100%; height: 100%;
-            object-fit: cover; z-index: 1;
-        }
-
-        .hero-fallback {
+        .hero-bg {
+            position: absolute; inset: -20px;
+            width: calc(100% + 40px); height: calc(100% + 40px);
+            background: url('hero-poster.jpg') center/cover no-repeat;
             z-index: 1;
+            animation: kenBurns 25s ease-in-out infinite alternate;
+            will-change: transform;
+            backface-visibility: hidden;
         }
 
-        #heroVid {
-            z-index: 2;
+        @keyframes kenBurns {
+            0%   { transform: scale(1) translate(0, 0); }
+            100% { transform: scale(1.08) translate(-10px, -5px); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .hero-bg { animation: none; transform: scale(1); }
         }
 
         .hero-overlay {
@@ -119,14 +132,10 @@
 
         .hero h1 {
             font-size: clamp(3.5rem, 8vw, 7rem);
-            color: var(--petal); line-height: 0.95;
-            letter-spacing: -0.03em;
+            color: var(--petal); line-height: 0.95; letter-spacing: -0.03em;
             opacity: 0; animation: fadeUp 1s 0.5s forwards;
         }
-
-        .hero h1 em {
-            font-style: normal; color: var(--sage);
-        }
+        .hero h1 em { font-style: normal; color: var(--sage); }
 
         .hero-sub {
             font-size: 1.1rem; color: rgba(253,251,248,0.55);
@@ -146,16 +155,9 @@
             text-transform: uppercase; text-decoration: none; cursor: pointer;
             transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1); border: none;
         }
-
-        .btn-fill {
-            background: var(--sage); color: var(--loam);
-        }
+        .btn-fill { background: var(--sage); color: var(--loam); }
         .btn-fill:hover { background: #fff; transform: translateY(-2px); }
-
-        .btn-ghost {
-            background: transparent; color: var(--petal);
-            border: 1px solid rgba(253,251,248,0.2);
-        }
+        .btn-ghost { background: transparent; color: var(--petal); border: 1px solid rgba(253,251,248,0.2); }
         .btn-ghost:hover { border-color: var(--sage); color: var(--sage); }
 
         .scroll-indicator {
@@ -163,12 +165,10 @@
             z-index: 3; display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
             opacity: 0; animation: fadeUp 1s 1.2s forwards;
         }
-
         .scroll-indicator span {
             font-size: 0.6rem; letter-spacing: 0.2em; text-transform: uppercase;
             color: rgba(253,251,248,0.3); font-weight: 500;
         }
-
         .scroll-line {
             width: 1px; height: 40px; background: linear-gradient(to bottom, var(--sage), transparent);
             animation: scrollPulse 2s ease-in-out infinite;
@@ -178,154 +178,77 @@
             from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
         @keyframes scrollPulse {
             0%, 100% { opacity: 0.3; transform: scaleY(1); }
             50% { opacity: 1; transform: scaleY(1.2); }
         }
 
         /* ═══════════════════════════════════════════
-           MARQUEE STRIP
+           MARQUEE
            ═══════════════════════════════════════════ */
-        .marquee {
-            background: var(--sage); padding: 0.8rem 0; overflow: hidden; white-space: nowrap;
-        }
-
+        .marquee { background: var(--sage); padding: 0.8rem 0; overflow: hidden; white-space: nowrap; }
         .marquee-inner {
             display: inline-block; animation: marqueeScroll 30s linear infinite;
+            will-change: transform; backface-visibility: hidden;
         }
-
         .marquee-inner span {
             font-size: 0.65rem; font-weight: 700; letter-spacing: 0.2em;
             text-transform: uppercase; color: var(--loam); padding: 0 3rem;
         }
-
-        @keyframes marqueeScroll {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
+        @keyframes marqueeScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
         /* ═══════════════════════════════════════════
-           PHILOSOPHY SECTION
+           PHILOSOPHY
            ═══════════════════════════════════════════ */
         .philosophy {
             padding: 10rem 4rem; background: var(--petal);
             display: grid; grid-template-columns: 1fr 1fr; gap: 6rem;
             max-width: 1300px; margin: 0 auto; align-items: center;
         }
-
         .phil-left .accent { color: var(--terracotta); font-size: 1.4rem; }
-
-        .phil-left h2 {
-            font-size: clamp(2.2rem, 4vw, 3.2rem);
-            line-height: 1.15; margin: 1rem 0 1.5rem;
-        }
-
-        .phil-left p {
-            color: rgba(44,42,37,0.6); font-size: 1rem; line-height: 1.8; font-weight: 300;
-        }
-
-        .phil-right {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem;
-        }
-
-        .value-card {
-            padding: 2rem 0; border-top: 2px solid var(--sage);
-        }
-
-        .value-card h4 {
-            font-family: 'DM Serif Display', serif; font-size: 1.1rem; margin-bottom: 0.6rem;
-        }
-
-        .value-card p {
-            font-size: 0.85rem; line-height: 1.6; color: rgba(44,42,37,0.55); font-weight: 300;
-        }
+        .phil-left h2 { font-size: clamp(2.2rem, 4vw, 3.2rem); line-height: 1.15; margin: 1rem 0 1.5rem; }
+        .phil-left p { color: rgba(44,42,37,0.6); font-size: 1rem; line-height: 1.8; font-weight: 300; }
+        .phil-right { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+        .value-card { padding: 2rem 0; border-top: 2px solid var(--sage); }
+        .value-card h4 { font-family: 'DM Serif Display', serif; font-size: 1.1rem; margin-bottom: 0.6rem; }
+        .value-card p { font-size: 0.85rem; line-height: 1.6; color: rgba(44,42,37,0.55); font-weight: 300; }
 
         /* ═══════════════════════════════════════════
            PRODUCTS
            ═══════════════════════════════════════════ */
-        .products {
-            padding: 8rem 4rem; background: var(--loam);
-        }
-
-        .section-head {
-            text-align: center; margin-bottom: 5rem;
-        }
-
+        .products { padding: 8rem 4rem; background: var(--loam); }
+        .section-head { text-align: center; margin-bottom: 5rem; }
         .section-head .accent { color: var(--sage); font-size: 1.3rem; display: block; margin-bottom: 0.5rem; }
-
-        .section-head h2 {
-            font-size: clamp(2.2rem, 4vw, 3rem); color: var(--petal); margin-bottom: 1rem;
-        }
-
-        .section-head p {
-            color: rgba(253,251,248,0.4); font-size: 0.95rem; max-width: 460px; margin: 0 auto; font-weight: 300;
-        }
+        .section-head h2 { font-size: clamp(2.2rem, 4vw, 3rem); color: var(--petal); margin-bottom: 1rem; }
+        .section-head p { color: rgba(253,251,248,0.4); font-size: 0.95rem; max-width: 460px; margin: 0 auto; font-weight: 300; }
 
         .product-scroll {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 1.5rem;
-            max-width: 1300px;
-            margin: 0 auto;
+            display: grid; grid-template-columns: repeat(5, 1fr); gap: 1.5rem;
+            max-width: 1300px; margin: 0 auto;
         }
-
         .p-card {
-            background: rgba(253,251,248,0.04);
-            border: 1px solid rgba(183,196,161,0.08);
-            overflow: hidden;
-            transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+            background: rgba(253,251,248,0.04); border: 1px solid rgba(183,196,161,0.08);
+            overflow: hidden; transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
         }
-
-        .p-card:hover {
-            border-color: var(--sage);
-            background: rgba(253,251,248,0.06);
-            transform: translateY(-8px);
-        }
-
-        .p-card img {
-            width: 100%; aspect-ratio: 4/5; object-fit: cover;
-            transition: transform 0.6s ease;
-        }
-
+        .p-card:hover { border-color: var(--sage); background: rgba(253,251,248,0.06); transform: translateY(-8px); }
+        .p-card img { width: 100%; aspect-ratio: 4/5; object-fit: cover; transition: transform 0.6s ease; }
         .p-card:hover img { transform: scale(1.04); }
-
         .p-body { padding: 1.5rem; }
-
-        .p-tag {
-            font-size: 0.58rem; font-weight: 700; letter-spacing: 0.16em;
-            text-transform: uppercase; color: var(--sage); margin-bottom: 0.6rem;
-        }
-
+        .p-tag { font-size: 0.58rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--sage); margin-bottom: 0.6rem; }
         .p-body h3 { font-size: 1.3rem; color: var(--petal); margin-bottom: 0.4rem; }
-
-        .p-body p {
-            font-size: 0.8rem; line-height: 1.6;
-            color: rgba(253,251,248,0.4); font-weight: 300;
-        }
-
-        .p-price {
-            margin-top: 1rem; font-size: 0.8rem; font-weight: 700;
-            color: var(--gold);
-        }
+        .p-body p { font-size: 0.8rem; line-height: 1.6; color: rgba(253,251,248,0.4); font-weight: 300; }
+        .p-price { margin-top: 1rem; font-size: 0.8rem; font-weight: 700; color: var(--gold); }
 
         /* ═══════════════════════════════════════════
            LINEUP FULL-BLEED
            ═══════════════════════════════════════════ */
-        .lineup {
-            position: relative; height: 70vh; min-height: 500px; overflow: hidden;
-        }
-
-        .lineup img {
-            width: 100%; height: 100%; object-fit: cover;
-        }
-
+        .lineup { position: relative; height: 70vh; min-height: 500px; overflow: hidden; }
+        .lineup img { width: 100%; height: 100%; object-fit: cover; }
         .lineup-overlay {
             position: absolute; inset: 0;
             background: linear-gradient(90deg, rgba(44,42,37,0.9) 0%, rgba(44,42,37,0.4) 50%, transparent 100%);
             display: flex; align-items: center; padding: 0 6rem;
         }
-
         .lineup-text { max-width: 480px; }
         .lineup-text .accent { color: var(--sage); font-size: 1.2rem; }
         .lineup-text h2 { color: var(--petal); font-size: 2.8rem; line-height: 1.1; margin: 0.75rem 0 1.25rem; }
@@ -334,183 +257,77 @@
         /* ═══════════════════════════════════════════
            RITUAL STEPS
            ═══════════════════════════════════════════ */
-        .ritual {
-            padding: 8rem 4rem; background: var(--petal);
-        }
-
+        .ritual { padding: 8rem 4rem; background: var(--petal); }
         .ritual .section-head h2 { color: var(--loam); }
         .ritual .section-head p { color: rgba(44,42,37,0.5); }
-
-        .steps {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 4rem;
-            max-width: 1000px; margin: 0 auto;
-        }
-
+        .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4rem; max-width: 1000px; margin: 0 auto; }
         .step { text-align: center; }
-
-        .step-num {
-            font-family: 'DM Serif Display', serif; font-size: 4rem;
-            color: var(--sage); line-height: 1; margin-bottom: 1.5rem;
-            opacity: 0.4;
-        }
-
+        .step-num { font-family: 'DM Serif Display', serif; font-size: 4rem; color: var(--sage); line-height: 1; margin-bottom: 1.5rem; opacity: 0.4; }
         .step h3 { font-size: 1.2rem; margin-bottom: 0.75rem; }
-
-        .step p {
-            font-size: 0.88rem; line-height: 1.7;
-            color: rgba(44,42,37,0.55); font-weight: 300;
-        }
+        .step p { font-size: 0.88rem; line-height: 1.7; color: rgba(44,42,37,0.55); font-weight: 300; }
 
         /* ═══════════════════════════════════════════
-           INGREDIENTS — DARK
+           INGREDIENTS
            ═══════════════════════════════════════════ */
-        .ingredients {
-            padding: 8rem 4rem; background: var(--loam); position: relative;
-            overflow: hidden;
-        }
-
-        .ingredients::before {
-            content: ''; position: absolute; top: -200px; right: -200px;
-            width: 600px; height: 600px;
-            background: radial-gradient(circle, rgba(183,196,161,0.06) 0%, transparent 70%);
-            pointer-events: none;
-        }
-
+        .ingredients { padding: 8rem 4rem; background: var(--loam); position: relative; overflow: hidden; }
+        .ingredients::before { content: ''; position: absolute; top: -200px; right: -200px; width: 600px; height: 600px; background: radial-gradient(circle, rgba(183,196,161,0.06) 0%, transparent 70%); pointer-events: none; }
         .ingredients .section-head h2 { color: var(--petal); }
-
-        .ingredient-grid {
-            display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem;
-            max-width: 900px; margin: 0 auto;
-        }
-
-        .pill {
-            padding: 0.65rem 1.4rem;
-            border: 1px solid rgba(183,196,161,0.15);
-            font-size: 0.75rem; font-weight: 500; letter-spacing: 0.03em;
-            color: rgba(253,251,248,0.5);
-            transition: all 0.3s ease;
-        }
-
-        .pill:hover {
-            border-color: var(--sage); color: var(--sage);
-            background: rgba(183,196,161,0.06);
-        }
-
-        .ing-note {
-            text-align: center; margin-top: 3rem;
-            font-size: 0.72rem; color: rgba(253,251,248,0.2); font-weight: 400;
-            letter-spacing: 0.06em;
-        }
+        .ingredient-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem; max-width: 900px; margin: 0 auto; }
+        .pill { padding: 0.65rem 1.4rem; border: 1px solid rgba(183,196,161,0.15); font-size: 0.75rem; font-weight: 500; letter-spacing: 0.03em; color: rgba(253,251,248,0.5); transition: all 0.3s ease; }
+        .pill:hover { border-color: var(--sage); color: var(--sage); background: rgba(183,196,161,0.06); }
+        .ing-note { text-align: center; margin-top: 3rem; font-size: 0.72rem; color: rgba(253,251,248,0.2); font-weight: 400; letter-spacing: 0.06em; }
 
         /* ═══════════════════════════════════════════
-           WAITLIST CTA
+           WAITLIST
            ═══════════════════════════════════════════ */
-        .waitlist {
-            padding: 10rem 4rem;
-            background: var(--sage);
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .waitlist::before {
-            content: ''; position: absolute; inset: 0;
-            background: radial-gradient(ellipse at bottom, rgba(91,107,78,0.3) 0%, transparent 60%);
-        }
-
+        .waitlist { padding: 10rem 4rem; background: var(--sage); text-align: center; position: relative; overflow: hidden; }
+        .waitlist::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at bottom, rgba(91,107,78,0.3) 0%, transparent 60%); }
         .waitlist > * { position: relative; z-index: 1; }
-
         .waitlist .accent { color: var(--moss); font-size: 1.3rem; }
-
-        .waitlist h2 {
-            font-size: clamp(2.5rem, 5vw, 3.5rem); color: var(--loam);
-            margin: 0.5rem 0 1rem;
-        }
-
-        .waitlist > p {
-            color: rgba(44,42,37,0.6); max-width: 440px; margin: 0 auto 2.5rem;
-            font-size: 1rem; line-height: 1.7; font-weight: 300;
-        }
-
-        .wl-form {
-            display: flex; max-width: 500px; margin: 0 auto;
-            box-shadow: 0 8px 40px rgba(44,42,37,0.1);
-        }
-
-        .wl-form input {
-            flex: 1; padding: 1.1rem 1.5rem; border: none;
-            background: var(--petal); font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 0.9rem; color: var(--loam); outline: none;
-        }
-
+        .waitlist h2 { font-size: clamp(2.5rem, 5vw, 3.5rem); color: var(--loam); margin: 0.5rem 0 1rem; }
+        .waitlist > p { color: rgba(44,42,37,0.6); max-width: 440px; margin: 0 auto 2.5rem; font-size: 1rem; line-height: 1.7; font-weight: 300; }
+        .wl-form { display: flex; max-width: 500px; margin: 0 auto; box-shadow: 0 8px 40px rgba(44,42,37,0.1); }
+        .wl-form input { flex: 1; padding: 1.1rem 1.5rem; border: none; background: var(--petal); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.9rem; color: var(--loam); outline: none; }
         .wl-form input::placeholder { color: rgba(44,42,37,0.3); }
-
-        .wl-form button {
-            padding: 1.1rem 2.2rem; background: var(--loam); color: var(--petal);
-            border: none; font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em;
-            text-transform: uppercase; cursor: pointer;
-            transition: background 0.3s ease; white-space: nowrap;
-        }
-
+        .wl-form button { padding: 1.1rem 2.2rem; background: var(--loam); color: var(--petal); border: none; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; transition: background 0.3s ease; white-space: nowrap; }
         .wl-form button:hover { background: var(--moss); }
-
-        .wl-note {
-            margin-top: 1.2rem; font-size: 0.7rem;
-            color: rgba(44,42,37,0.35); font-weight: 400;
-        }
+        .wl-note { margin-top: 1.2rem; font-size: 0.7rem; color: rgba(44,42,37,0.35); font-weight: 400; }
 
         /* ═══════════════════════════════════════════
            FOOTER
            ═══════════════════════════════════════════ */
-        footer {
-            padding: 5rem 4rem 2.5rem; background: var(--loam);
-            border-top: 1px solid rgba(183,196,161,0.08);
-        }
-
-        .footer-grid {
-            display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
-            gap: 3rem; max-width: 1300px; margin: 0 auto 4rem;
-        }
-
+        footer { padding: 5rem 4rem 2.5rem; background: var(--loam); border-top: 1px solid rgba(183,196,161,0.08); }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem; max-width: 1300px; margin: 0 auto 4rem; }
         .footer-brand img { height: 30px; opacity: 0.4; }
-
-        .footer-brand p {
-            margin-top: 1rem; color: rgba(253,251,248,0.3);
-            font-size: 0.82rem; line-height: 1.7; font-weight: 300;
-        }
-
-        .f-col h4 {
-            color: rgba(253,251,248,0.5); font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 0.62rem; font-weight: 700; letter-spacing: 0.18em;
-            text-transform: uppercase; margin-bottom: 1.5rem;
-        }
-
+        .footer-brand p { margin-top: 1rem; color: rgba(253,251,248,0.3); font-size: 0.82rem; line-height: 1.7; font-weight: 300; }
+        .f-col h4 { color: rgba(253,251,248,0.5); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 1.5rem; }
         .f-col ul { list-style: none; }
         .f-col li { margin-bottom: 0.7rem; }
-        .f-col a {
-            color: rgba(253,251,248,0.3); text-decoration: none;
-            font-size: 0.82rem; font-weight: 300; transition: color 0.3s ease;
-        }
+        .f-col a { color: rgba(253,251,248,0.3); text-decoration: none; font-size: 0.82rem; font-weight: 300; transition: color 0.3s ease; }
         .f-col a:hover { color: var(--sage); }
-
-        .footer-bottom {
-            border-top: 1px solid rgba(253,251,248,0.05);
-            padding-top: 2rem; max-width: 1300px; margin: 0 auto;
-            display: flex; justify-content: space-between; align-items: center;
-            font-size: 0.68rem; color: rgba(253,251,248,0.2); font-weight: 300;
-        }
+        .footer-bottom { border-top: 1px solid rgba(253,251,248,0.05); padding-top: 2rem; max-width: 1300px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; font-size: 0.68rem; color: rgba(253,251,248,0.2); font-weight: 300; }
 
         /* ═══════════════════════════════════════════
-           SCROLL ANIMATIONS
+           SCROLL REVEAL — GPU accelerated, one-shot
            ═══════════════════════════════════════════ */
         .reveal {
-            opacity: 0; transform: translateY(40px);
-            transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1), transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+            opacity: 0;
+            transform: translateY(40px) translateZ(0);
+            transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+                        transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+            will-change: transform, opacity;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
         }
-
-        .reveal.visible { opacity: 1; transform: translateY(0); }
-
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0) translateZ(0);
+        }
+        /* After transition done — release GPU layer */
+        .reveal.done {
+            will-change: auto;
+            transform: none;
+        }
         .reveal-delay-1 { transition-delay: 0.1s; }
         .reveal-delay-2 { transition-delay: 0.2s; }
         .reveal-delay-3 { transition-delay: 0.3s; }
@@ -519,44 +336,29 @@
         /* ═══════════════════════════════════════════
            RESPONSIVE
            ═══════════════════════════════════════════ */
-        @media (max-width: 1024px) {
-            .product-scroll { grid-template-columns: repeat(3, 1fr); }
-        }
-
+        @media (max-width: 1024px) { .product-scroll { grid-template-columns: repeat(3, 1fr); } }
         @media (max-width: 768px) {
-            nav { padding: 1rem 1.5rem; }
-            nav.solid { padding: 0.7rem 1.5rem; }
+            nav { padding: 1rem 1.5rem; } nav.solid { padding: 0.7rem 1.5rem; }
             .nav-links { display: none; }
-
             .hero-emblem { width: 60px; height: 60px; }
-
             .philosophy { grid-template-columns: 1fr; padding: 5rem 2rem; gap: 3rem; }
             .products { padding: 5rem 1.5rem; }
             .product-scroll { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
-
             .lineup-overlay { padding: 0 2rem; background: linear-gradient(0deg, rgba(44,42,37,0.95) 0%, rgba(44,42,37,0.3) 100%); align-items: flex-end; padding-bottom: 3rem; }
             .lineup-text h2 { font-size: 1.8rem; }
-
             .steps { grid-template-columns: 1fr; gap: 2.5rem; }
-
             .ritual, .ingredients, .waitlist { padding: 5rem 1.5rem; }
-
             .wl-form { flex-direction: column; }
-
             .footer-grid { grid-template-columns: 1fr 1fr; }
             .footer-bottom { flex-direction: column; gap: 0.5rem; text-align: center; }
         }
-
-        @media (max-width: 480px) {
-            .product-scroll { grid-template-columns: 1fr; max-width: 320px; margin: 0 auto; }
-        }
+        @media (max-width: 480px) { .product-scroll { grid-template-columns: 1fr; max-width: 320px; margin: 0 auto; } }
     </style>
 </head>
 <body>
 
-    <!-- NAV -->
     <nav id="nav">
-        <img src="logo-white.png" alt="GROUNDED" class="nav-logo">
+        <img src="logo-white.png" alt="GROUNDED" class="nav-logo" width="120" height="40" decoding="async">
         <ul class="nav-links">
             <li><a href="#philosophy">Philosophy</a></li>
             <li><a href="#products">Products</a></li>
@@ -565,16 +367,12 @@
         </ul>
     </nav>
 
-    <!-- HERO — VIDEO -->
+    <!-- HERO — Ken Burns CSS animation, no video -->
     <section class="hero">
-        <img class="hero-video hero-fallback" src="hero-poster.jpg" alt="">
-        <video class="hero-video" id="heroVid" muted loop playsinline preload="auto" poster="hero-poster.jpg">
-            <source src="https://github.com/bmichals25/grounded-wellness/releases/download/v1.0/hero-web.mp4" type="video/mp4">
-            <source src="hero-web.mp4" type="video/mp4">
-        </video>
+        <div class="hero-bg"></div>
         <div class="hero-overlay"></div>
         <div class="hero-content">
-            <img src="logo.png" alt="GROUNDED emblem" class="hero-emblem">
+            <img src="logo.png" alt="GROUNDED" class="hero-emblem" width="80" height="80" decoding="async">
             <h1>Plants with <em>purpose</em>.</h1>
             <p class="hero-sub">Cannabis belongs in your wellness routine — formulated alongside turmeric, ashwagandha, and lion's mane. Dosed with precision. Grounded in science.</p>
             <div class="hero-actions">
@@ -588,29 +386,19 @@
         </div>
     </section>
 
-    <!-- MARQUEE -->
     <div class="marquee">
         <div class="marquee-inner">
-            <span>Sleep</span><span>&#9679;</span>
-            <span>Focus</span><span>&#9679;</span>
-            <span>Calm</span><span>&#9679;</span>
-            <span>Recovery</span><span>&#9679;</span>
-            <span>Vitality</span><span>&#9679;</span>
-            <span>Transparency</span><span>&#9679;</span>
-            <span>Plant Equality</span><span>&#9679;</span>
-            <span>Ritual</span><span>&#9679;</span>
-            <span>Sleep</span><span>&#9679;</span>
-            <span>Focus</span><span>&#9679;</span>
-            <span>Calm</span><span>&#9679;</span>
-            <span>Recovery</span><span>&#9679;</span>
-            <span>Vitality</span><span>&#9679;</span>
-            <span>Transparency</span><span>&#9679;</span>
-            <span>Plant Equality</span><span>&#9679;</span>
-            <span>Ritual</span><span>&#9679;</span>
+            <span>Sleep</span><span>&#9679;</span><span>Focus</span><span>&#9679;</span>
+            <span>Calm</span><span>&#9679;</span><span>Recovery</span><span>&#9679;</span>
+            <span>Vitality</span><span>&#9679;</span><span>Transparency</span><span>&#9679;</span>
+            <span>Plant Equality</span><span>&#9679;</span><span>Ritual</span><span>&#9679;</span>
+            <span>Sleep</span><span>&#9679;</span><span>Focus</span><span>&#9679;</span>
+            <span>Calm</span><span>&#9679;</span><span>Recovery</span><span>&#9679;</span>
+            <span>Vitality</span><span>&#9679;</span><span>Transparency</span><span>&#9679;</span>
+            <span>Plant Equality</span><span>&#9679;</span><span>Ritual</span><span>&#9679;</span>
         </div>
     </div>
 
-    <!-- PHILOSOPHY -->
     <section class="philosophy" id="philosophy">
         <div class="phil-left reveal">
             <span class="accent">our philosophy</span>
@@ -618,26 +406,13 @@
             <p>We believe cannabinoids deserve the same rigor, transparency, and intentionality as every other ingredient in your wellness stack. No winking. No vagueness. Just plants that work.</p>
         </div>
         <div class="phil-right">
-            <div class="value-card reveal reveal-delay-1">
-                <h4>Transparency</h4>
-                <p>Full-spectrum lab results, sourcing origins, and formulation rationale on every product.</p>
-            </div>
-            <div class="value-card reveal reveal-delay-2">
-                <h4>Functional Intention</h4>
-                <p>Every SKU maps to a specific daily need with cannabinoids dosed alongside synergistic botanicals.</p>
-            </div>
-            <div class="value-card reveal reveal-delay-3">
-                <h4>Plant Equality</h4>
-                <p>Cannabis sits alongside ashwagandha, reishi, and L-theanine. Not elevated. Not diminished.</p>
-            </div>
-            <div class="value-card reveal reveal-delay-4">
-                <h4>Ritual Over Recreation</h4>
-                <p>Morning focus. Afternoon calm. Evening recovery. Daily habits, not party culture.</p>
-            </div>
+            <div class="value-card reveal reveal-delay-1"><h4>Transparency</h4><p>Full-spectrum lab results, sourcing origins, and formulation rationale on every product.</p></div>
+            <div class="value-card reveal reveal-delay-2"><h4>Functional Intention</h4><p>Every SKU maps to a specific daily need with cannabinoids dosed alongside synergistic botanicals.</p></div>
+            <div class="value-card reveal reveal-delay-3"><h4>Plant Equality</h4><p>Cannabis sits alongside ashwagandha, reishi, and L-theanine. Not elevated. Not diminished.</p></div>
+            <div class="value-card reveal reveal-delay-4"><h4>Ritual Over Recreation</h4><p>Morning focus. Afternoon calm. Evening recovery. Daily habits, not party culture.</p></div>
         </div>
     </section>
 
-    <!-- PRODUCTS -->
     <section class="products" id="products">
         <div class="section-head reveal">
             <span class="accent">the collection</span>
@@ -646,56 +421,30 @@
         </div>
         <div class="product-scroll">
             <div class="p-card reveal reveal-delay-1">
-                <img src="drift-sleep-gummies.jpg" alt="DRIFT">
-                <div class="p-body">
-                    <div class="p-tag">Sleep &amp; Rest</div>
-                    <h3>DRIFT</h3>
-                    <p>CBN + chamomile + passionflower + magnesium glycinate</p>
-                    <div class="p-price">Night Gummies — $38</div>
-                </div>
+                <img src="drift-sleep-gummies.jpg" alt="DRIFT" width="400" height="500" decoding="async">
+                <div class="p-body"><div class="p-tag">Sleep &amp; Rest</div><h3>DRIFT</h3><p>CBN + chamomile + passionflower + magnesium glycinate</p><div class="p-price">Night Gummies — $38</div></div>
             </div>
             <div class="p-card reveal reveal-delay-2">
-                <img src="even-calm-tincture.jpg" alt="EVEN">
-                <div class="p-body">
-                    <div class="p-tag">Calm &amp; Balance</div>
-                    <h3>EVEN</h3>
-                    <p>CBD + ashwagandha + rhodiola + lemon balm + L-theanine</p>
-                    <div class="p-price">Calm Tincture — $45</div>
-                </div>
+                <img src="even-calm-tincture.jpg" alt="EVEN" width="400" height="500" decoding="async">
+                <div class="p-body"><div class="p-tag">Calm &amp; Balance</div><h3>EVEN</h3><p>CBD + ashwagandha + rhodiola + lemon balm + L-theanine</p><div class="p-price">Calm Tincture — $45</div></div>
             </div>
             <div class="p-card reveal reveal-delay-3">
-                <img src="meridian-focus-capsules.jpg" alt="MERIDIAN">
-                <div class="p-body">
-                    <div class="p-tag">Focus &amp; Clarity</div>
-                    <h3>MERIDIAN</h3>
-                    <p>CBD + lion's mane + ginkgo biloba + B-vitamins</p>
-                    <div class="p-price">Focus Capsules — $42</div>
-                </div>
+                <img src="meridian-focus-capsules.jpg" alt="MERIDIAN" width="400" height="500" decoding="async">
+                <div class="p-body"><div class="p-tag">Focus &amp; Clarity</div><h3>MERIDIAN</h3><p>CBD + lion's mane + ginkgo biloba + B-vitamins</p><div class="p-price">Focus Capsules — $42</div></div>
             </div>
             <div class="p-card reveal reveal-delay-4">
-                <img src="soothe-recovery-balm.jpg" alt="SOOTHE">
-                <div class="p-body">
-                    <div class="p-tag">Pain &amp; Recovery</div>
-                    <h3>SOOTHE</h3>
-                    <p>CBD + arnica + turmeric + boswellia + menthol</p>
-                    <div class="p-price">Recovery Balm — $35</div>
-                </div>
+                <img src="soothe-recovery-balm.jpg" alt="SOOTHE" width="400" height="500" decoding="async">
+                <div class="p-body"><div class="p-tag">Pain &amp; Recovery</div><h3>SOOTHE</h3><p>CBD + arnica + turmeric + boswellia + menthol</p><div class="p-price">Recovery Balm — $35</div></div>
             </div>
             <div class="p-card reveal reveal-delay-4">
-                <img src="bloom-daily-powder.jpg" alt="BLOOM">
-                <div class="p-body">
-                    <div class="p-tag">Daily Wellness</div>
-                    <h3>BLOOM</h3>
-                    <p>Full-spectrum hemp + reishi + elderberry + moringa</p>
-                    <div class="p-price">Vitality Powder — $52</div>
-                </div>
+                <img src="bloom-daily-powder.jpg" alt="BLOOM" width="400" height="500" decoding="async">
+                <div class="p-body"><div class="p-tag">Daily Wellness</div><h3>BLOOM</h3><p>Full-spectrum hemp + reishi + elderberry + moringa</p><div class="p-price">Vitality Powder — $52</div></div>
             </div>
         </div>
     </section>
 
-    <!-- LINEUP FULL-BLEED -->
     <section class="lineup">
-        <img src="lineup.jpg" alt="GROUNDED Product Collection">
+        <img src="lineup.jpg" alt="GROUNDED Product Collection" width="1600" height="700" decoding="async">
         <div class="lineup-overlay">
             <div class="lineup-text reveal">
                 <span class="accent">the full system</span>
@@ -706,62 +455,38 @@
         </div>
     </section>
 
-    <!-- RITUAL STEPS -->
     <section class="ritual">
         <div class="section-head reveal">
             <span class="accent" style="color: var(--terracotta);">the ritual</span>
             <h2>How GROUNDED works.</h2>
         </div>
         <div class="steps">
-            <div class="step reveal reveal-delay-1">
-                <div class="step-num">01</div>
-                <h3>Choose your intention</h3>
-                <p>Sleep, focus, calm, recovery, or daily vitality. Each formulation is built for a specific need state.</p>
-            </div>
-            <div class="step reveal reveal-delay-2">
-                <div class="step-num">02</div>
-                <h3>Start with precision</h3>
-                <p>Every product includes a dosing guide with titration protocol. Start low, find your sweet spot.</p>
-            </div>
-            <div class="step reveal reveal-delay-3">
-                <div class="step-num">03</div>
-                <h3>Stack with confidence</h3>
-                <p>Morning MERIDIAN + evening DRIFT. Daily BLOOM + as-needed SOOTHE. Designed to work together.</p>
-            </div>
+            <div class="step reveal reveal-delay-1"><div class="step-num">01</div><h3>Choose your intention</h3><p>Sleep, focus, calm, recovery, or daily vitality. Each formulation is built for a specific need state.</p></div>
+            <div class="step reveal reveal-delay-2"><div class="step-num">02</div><h3>Start with precision</h3><p>Every product includes a dosing guide with titration protocol. Start low, find your sweet spot.</p></div>
+            <div class="step reveal reveal-delay-3"><div class="step-num">03</div><h3>Stack with confidence</h3><p>Morning MERIDIAN + evening DRIFT. Daily BLOOM + as-needed SOOTHE. Designed to work together.</p></div>
         </div>
     </section>
 
-    <!-- INGREDIENTS -->
     <section class="ingredients" id="ingredients">
         <div class="section-head reveal">
             <span class="accent" style="color: var(--sage);">what's inside</span>
             <h2>Every ingredient earns its place.</h2>
         </div>
         <div class="ingredient-grid reveal">
-            <span class="pill">Full-Spectrum Hemp</span>
-            <span class="pill">CBN Isolate</span>
-            <span class="pill">Ashwagandha KSM-66</span>
-            <span class="pill">Lion's Mane</span>
-            <span class="pill">Reishi</span>
-            <span class="pill">Rhodiola Rosea</span>
-            <span class="pill">L-Theanine</span>
-            <span class="pill">Passionflower</span>
-            <span class="pill">Chamomile</span>
-            <span class="pill">Turmeric Curcumin</span>
-            <span class="pill">Boswellia</span>
-            <span class="pill">Arnica</span>
-            <span class="pill">Ginkgo Biloba</span>
-            <span class="pill">Lemon Balm</span>
-            <span class="pill">Elderberry</span>
-            <span class="pill">Moringa</span>
-            <span class="pill">Magnesium Glycinate</span>
-            <span class="pill">Spirulina</span>
+            <span class="pill">Full-Spectrum Hemp</span><span class="pill">CBN Isolate</span>
+            <span class="pill">Ashwagandha KSM-66</span><span class="pill">Lion's Mane</span>
+            <span class="pill">Reishi</span><span class="pill">Rhodiola Rosea</span>
+            <span class="pill">L-Theanine</span><span class="pill">Passionflower</span>
+            <span class="pill">Chamomile</span><span class="pill">Turmeric Curcumin</span>
+            <span class="pill">Boswellia</span><span class="pill">Arnica</span>
+            <span class="pill">Ginkgo Biloba</span><span class="pill">Lemon Balm</span>
+            <span class="pill">Elderberry</span><span class="pill">Moringa</span>
+            <span class="pill">Magnesium Glycinate</span><span class="pill">Spirulina</span>
             <span class="pill">Monk Fruit</span>
         </div>
         <p class="ing-note">Organic where available &middot; Non-GMO &middot; Vegan &middot; Third-party tested &middot; Always</p>
     </section>
 
-    <!-- WAITLIST -->
     <section class="waitlist" id="waitlist">
         <span class="accent">launching soon</span>
         <h2>Get grounded first.</h2>
@@ -773,41 +498,15 @@
         <p class="wl-note">No spam. Just plants.</p>
     </section>
 
-    <!-- FOOTER -->
     <footer>
         <div class="footer-grid">
             <div class="footer-brand">
-                <img src="logo-white.png" alt="GROUNDED">
+                <img src="logo-white.png" alt="GROUNDED" width="120" height="30" decoding="async">
                 <p>Functional botanicals for sleep, focus, calm, and recovery. Cannabis as wellness, not vice.</p>
             </div>
-            <div class="f-col">
-                <h4>Products</h4>
-                <ul>
-                    <li><a href="#">DRIFT — Sleep</a></li>
-                    <li><a href="#">EVEN — Calm</a></li>
-                    <li><a href="#">MERIDIAN — Focus</a></li>
-                    <li><a href="#">SOOTHE — Recovery</a></li>
-                    <li><a href="#">BLOOM — Vitality</a></li>
-                </ul>
-            </div>
-            <div class="f-col">
-                <h4>Company</h4>
-                <ul>
-                    <li><a href="#">Our Story</a></li>
-                    <li><a href="#">Ingredients</a></li>
-                    <li><a href="#">Lab Results</a></li>
-                    <li><a href="#">Journal</a></li>
-                </ul>
-            </div>
-            <div class="f-col">
-                <h4>Connect</h4>
-                <ul>
-                    <li><a href="#">Instagram</a></li>
-                    <li><a href="#">Newsletter</a></li>
-                    <li><a href="#">Contact</a></li>
-                    <li><a href="#">Press</a></li>
-                </ul>
-            </div>
+            <div class="f-col"><h4>Products</h4><ul><li><a href="#">DRIFT — Sleep</a></li><li><a href="#">EVEN — Calm</a></li><li><a href="#">MERIDIAN — Focus</a></li><li><a href="#">SOOTHE — Recovery</a></li><li><a href="#">BLOOM — Vitality</a></li></ul></div>
+            <div class="f-col"><h4>Company</h4><ul><li><a href="#">Our Story</a></li><li><a href="#">Ingredients</a></li><li><a href="#">Lab Results</a></li><li><a href="#">Journal</a></li></ul></div>
+            <div class="f-col"><h4>Connect</h4><ul><li><a href="#">Instagram</a></li><li><a href="#">Newsletter</a></li><li><a href="#">Contact</a></li><li><a href="#">Press</a></li></ul></div>
         </div>
         <div class="footer-bottom">
             <span>&copy; 2026 GROUNDED. All rights reserved.</span>
@@ -816,60 +515,31 @@
     </footer>
 
     <script>
-        // Scroll reveal — once visible, stays visible permanently (no re-triggering)
+        // One-shot reveal with GPU layer cleanup
         const obs = new IntersectionObserver((entries, observer) => {
             entries.forEach(e => {
                 if (e.isIntersecting) {
                     e.target.classList.add('visible');
-                    observer.unobserve(e.target); // Stop watching — never re-animate
+                    observer.unobserve(e.target);
+                    e.target.addEventListener('transitionend', () => {
+                        e.target.classList.add('done');
+                    }, { once: true });
                 }
             });
         }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
         document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
-        // Nav solid on scroll
-        const nav = document.getElementById('nav');
-        window.addEventListener('scroll', () => nav.classList.toggle('solid', window.scrollY > 80));
-
-        // Force video autoplay with multiple attempts
-        const vid = document.getElementById('heroVid');
-        const fallback = document.querySelector('.hero-fallback');
-
-        function tryPlay() {
-            if (!vid) return;
-            vid.muted = true;
-            const p = vid.play();
-            if (p !== undefined) {
-                p.then(() => {
-                    // Video playing — hide fallback image
-                    if (fallback) fallback.style.display = 'none';
-                    vid.style.display = 'block';
-                }).catch(() => {
-                    // Autoplay blocked — keep poster fallback visible
-                    if (fallback) fallback.style.display = 'block';
-                });
-            }
-        }
-
-        // Try immediately, on canplay, on user interaction, and after delay
-        vid.addEventListener('canplay', tryPlay);
-        vid.addEventListener('loadeddata', tryPlay);
-        document.addEventListener('click', tryPlay, { once: true });
-        document.addEventListener('touchstart', tryPlay, { once: true });
-        document.addEventListener('scroll', tryPlay, { once: true });
-        tryPlay();
-        setTimeout(tryPlay, 1000);
-        setTimeout(tryPlay, 3000);
-
-        // Parallax hero zoom on scroll
+        // Nav — throttled with rAF + passive
+        let navTick = false;
         window.addEventListener('scroll', () => {
-            const y = window.scrollY;
-            const hero = vid.style.display !== 'none' ? vid : fallback;
-            if (y < window.innerHeight && hero) {
-                hero.style.transform = `scale(${1 + y * 0.0003})`;
-                hero.style.opacity = 1 - (y / window.innerHeight) * 0.3;
+            if (!navTick) {
+                requestAnimationFrame(() => {
+                    document.getElementById('nav').classList.toggle('solid', window.scrollY > 80);
+                    navTick = false;
+                });
+                navTick = true;
             }
-        });
+        }, { passive: true });
     </script>
 
 </body>
