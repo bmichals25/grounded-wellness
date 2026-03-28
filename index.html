@@ -559,9 +559,11 @@
 
     <!-- HERO — VIDEO -->
     <section class="hero">
-        <video class="hero-video" autoplay muted loop playsinline>
-            <source src="hero-video-products.mp4" type="video/mp4">
+        <video class="hero-video" autoplay muted loop playsinline poster="hero-poster.jpg" preload="auto">
+            <source src="hero-web.mp4" type="video/mp4">
         </video>
+        <!-- Fallback poster if video fails -->
+        <img class="hero-video" src="hero-poster.jpg" alt="" style="display:none" onload="if(!document.querySelector('video').playing){this.style.display='block'}">
         <div class="hero-overlay"></div>
         <div class="hero-content">
             <img src="grounded-logo.jpg" alt="GROUNDED emblem" class="hero-emblem">
