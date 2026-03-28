@@ -646,7 +646,7 @@
         </div>
         <div class="product-scroll">
             <div class="p-card reveal reveal-delay-1">
-                <img src="drift-sleep-gummies.jpg" alt="DRIFT" loading="lazy">
+                <img src="drift-sleep-gummies.jpg" alt="DRIFT">
                 <div class="p-body">
                     <div class="p-tag">Sleep &amp; Rest</div>
                     <h3>DRIFT</h3>
@@ -655,7 +655,7 @@
                 </div>
             </div>
             <div class="p-card reveal reveal-delay-2">
-                <img src="even-calm-tincture.jpg" alt="EVEN" loading="lazy">
+                <img src="even-calm-tincture.jpg" alt="EVEN">
                 <div class="p-body">
                     <div class="p-tag">Calm &amp; Balance</div>
                     <h3>EVEN</h3>
@@ -664,7 +664,7 @@
                 </div>
             </div>
             <div class="p-card reveal reveal-delay-3">
-                <img src="meridian-focus-capsules.jpg" alt="MERIDIAN" loading="lazy">
+                <img src="meridian-focus-capsules.jpg" alt="MERIDIAN">
                 <div class="p-body">
                     <div class="p-tag">Focus &amp; Clarity</div>
                     <h3>MERIDIAN</h3>
@@ -673,7 +673,7 @@
                 </div>
             </div>
             <div class="p-card reveal reveal-delay-4">
-                <img src="soothe-recovery-balm.jpg" alt="SOOTHE" loading="lazy">
+                <img src="soothe-recovery-balm.jpg" alt="SOOTHE">
                 <div class="p-body">
                     <div class="p-tag">Pain &amp; Recovery</div>
                     <h3>SOOTHE</h3>
@@ -682,7 +682,7 @@
                 </div>
             </div>
             <div class="p-card reveal reveal-delay-4">
-                <img src="bloom-daily-powder.jpg" alt="BLOOM" loading="lazy">
+                <img src="bloom-daily-powder.jpg" alt="BLOOM">
                 <div class="p-body">
                     <div class="p-tag">Daily Wellness</div>
                     <h3>BLOOM</h3>
@@ -695,7 +695,7 @@
 
     <!-- LINEUP FULL-BLEED -->
     <section class="lineup">
-        <img src="lineup.jpg" alt="GROUNDED Product Collection" loading="lazy">
+        <img src="lineup.jpg" alt="GROUNDED Product Collection">
         <div class="lineup-overlay">
             <div class="lineup-text reveal">
                 <span class="accent">the full system</span>
@@ -816,9 +816,14 @@
     </footer>
 
     <script>
-        // Scroll reveal
-        const obs = new IntersectionObserver((entries) => {
-            entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+        // Scroll reveal — once visible, stays visible permanently (no re-triggering)
+        const obs = new IntersectionObserver((entries, observer) => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    e.target.classList.add('visible');
+                    observer.unobserve(e.target); // Stop watching — never re-animate
+                }
+            });
         }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
         document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
