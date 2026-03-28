@@ -60,7 +60,7 @@
             border-bottom: 1px solid rgba(183, 196, 161, 0.1);
         }
 
-        .nav-logo { height: 40px; filter: brightness(0) invert(1); opacity: 0.9; transition: height 0.5s ease; }
+        .nav-logo { height: 40px; opacity: 0.9; transition: height 0.5s ease; }
         nav.solid .nav-logo { height: 30px; }
 
         .nav-links { display: flex; gap: 3rem; list-style: none; align-items: center; }
@@ -90,6 +90,14 @@
         .hero-video {
             position: absolute; inset: 0; width: 100%; height: 100%;
             object-fit: cover; z-index: 1;
+        }
+
+        .hero-fallback {
+            z-index: 1;
+        }
+
+        #heroVid {
+            z-index: 2;
         }
 
         .hero-overlay {
@@ -465,7 +473,7 @@
             gap: 3rem; max-width: 1300px; margin: 0 auto 4rem;
         }
 
-        .footer-brand img { height: 30px; filter: brightness(0) invert(1); opacity: 0.4; }
+        .footer-brand img { height: 30px; opacity: 0.4; }
 
         .footer-brand p {
             margin-top: 1rem; color: rgba(253,251,248,0.3);
@@ -548,7 +556,7 @@
 
     <!-- NAV -->
     <nav id="nav">
-        <img src="grounded-logo.jpg" alt="GROUNDED" class="nav-logo">
+        <img src="logo-white.png" alt="GROUNDED" class="nav-logo">
         <ul class="nav-links">
             <li><a href="#philosophy">Philosophy</a></li>
             <li><a href="#products">Products</a></li>
@@ -559,14 +567,14 @@
 
     <!-- HERO — VIDEO -->
     <section class="hero">
-        <video class="hero-video" autoplay muted loop playsinline poster="hero-poster.jpg" preload="auto">
+        <img class="hero-video hero-fallback" src="hero-poster.jpg" alt="">
+        <video class="hero-video" id="heroVid" muted loop playsinline preload="auto" poster="hero-poster.jpg">
+            <source src="https://github.com/bmichals25/grounded-wellness/releases/download/v1.0/hero-web.mp4" type="video/mp4">
             <source src="hero-web.mp4" type="video/mp4">
         </video>
-        <!-- Fallback poster if video fails -->
-        <img class="hero-video" src="hero-poster.jpg" alt="" style="display:none" onload="if(!document.querySelector('video').playing){this.style.display='block'}">
         <div class="hero-overlay"></div>
         <div class="hero-content">
-            <img src="grounded-logo.jpg" alt="GROUNDED emblem" class="hero-emblem">
+            <img src="logo.png" alt="GROUNDED emblem" class="hero-emblem">
             <h1>Plants with <em>purpose</em>.</h1>
             <p class="hero-sub">Cannabis belongs in your wellness routine — formulated alongside turmeric, ashwagandha, and lion's mane. Dosed with precision. Grounded in science.</p>
             <div class="hero-actions">
@@ -769,7 +777,7 @@
     <footer>
         <div class="footer-grid">
             <div class="footer-brand">
-                <img src="grounded-logo.jpg" alt="GROUNDED">
+                <img src="logo-white.png" alt="GROUNDED">
                 <p>Functional botanicals for sleep, focus, calm, and recovery. Cannabis as wellness, not vice.</p>
             </div>
             <div class="f-col">
@@ -818,13 +826,43 @@
         const nav = document.getElementById('nav');
         window.addEventListener('scroll', () => nav.classList.toggle('solid', window.scrollY > 80));
 
-        // Parallax hero video slight zoom on scroll
-        const heroVideo = document.querySelector('.hero-video');
+        // Force video autoplay with multiple attempts
+        const vid = document.getElementById('heroVid');
+        const fallback = document.querySelector('.hero-fallback');
+
+        function tryPlay() {
+            if (!vid) return;
+            vid.muted = true;
+            const p = vid.play();
+            if (p !== undefined) {
+                p.then(() => {
+                    // Video playing — hide fallback image
+                    if (fallback) fallback.style.display = 'none';
+                    vid.style.display = 'block';
+                }).catch(() => {
+                    // Autoplay blocked — keep poster fallback visible
+                    if (fallback) fallback.style.display = 'block';
+                });
+            }
+        }
+
+        // Try immediately, on canplay, on user interaction, and after delay
+        vid.addEventListener('canplay', tryPlay);
+        vid.addEventListener('loadeddata', tryPlay);
+        document.addEventListener('click', tryPlay, { once: true });
+        document.addEventListener('touchstart', tryPlay, { once: true });
+        document.addEventListener('scroll', tryPlay, { once: true });
+        tryPlay();
+        setTimeout(tryPlay, 1000);
+        setTimeout(tryPlay, 3000);
+
+        // Parallax hero zoom on scroll
         window.addEventListener('scroll', () => {
             const y = window.scrollY;
-            if (y < window.innerHeight) {
-                heroVideo.style.transform = `scale(${1 + y * 0.0003})`;
-                heroVideo.style.opacity = 1 - (y / window.innerHeight) * 0.3;
+            const hero = vid.style.display !== 'none' ? vid : fallback;
+            if (y < window.innerHeight && hero) {
+                hero.style.transform = `scale(${1 + y * 0.0003})`;
+                hero.style.opacity = 1 - (y / window.innerHeight) * 0.3;
             }
         });
     </script>
